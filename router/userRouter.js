@@ -13,12 +13,15 @@ const {
 } = require("../middlewares/users/userValidation");
 const { addUser, deleteUser } = require("../controller/userController");
 
+const { checkLogin } = require("../middlewares/common/checkLogin");
+
 // User route
 
-router.get("/", decorateHtmlResponse("Users"), getUser);
+router.get("/", decorateHtmlResponse("Users"), checkLogin, getUser);
 
 router.post(
   "/",
+  checkLogin,
   avatarUpload,
   addUserValidators,
   addUserValidationHandler,
