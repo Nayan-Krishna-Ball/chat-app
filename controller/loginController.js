@@ -1,12 +1,12 @@
-//external imports
-const createError = require("http-errors");
+// external imports
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const createError = require("http-errors");
 
-//internal imports
+// internal imports
 const User = require("../models/People");
 
-//get login page
+// get login page
 function getLogin(req, res, next) {
   res.render("index");
 }
@@ -22,16 +22,17 @@ async function login(req, res, next) {
     if (user && user._id) {
       const isValidPassword = await bcrypt.compare(
         req.body.password,
-        user.password,
+        user.password
       );
 
       if (isValidPassword) {
         // prepare the user object to generate token
         const userObject = {
+          userid: user._id,
           username: user.name,
-          mobile: user.mobile,
           email: user.email,
-          role: "user",
+          avatar: user.avatar || null,
+          role: user.role || "user",
         };
 
         // generate token
@@ -49,7 +50,7 @@ async function login(req, res, next) {
         // set logged in user local identifier
         res.locals.loggedInUser = userObject;
 
-        res.render("inbox");
+        res.redirect("inbox");
       } else {
         throw createError("Login failed! Please try again.");
       }
